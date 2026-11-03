@@ -1,0 +1,68 @@
+project:
+  name: "Predictive Maintenance Platform"
+  version: "1.0.0"
+
+paths:
+  raw_data: "data/raw"
+  bronze_data: "data/bronze"
+  silver_data: "data/silver"
+  gold_data: "data/gold"
+  models_dir: "models_registry"
+  reports_dir: "reports"
+
+data:
+  datasets: ["FD001", "FD002", "FD003", "FD004"]
+  unit_col: "unit_nr"
+  time_col: "time_cycles"
+  setting_cols: ["setting_1", "setting_2", "setting_3"]
+  sensor_cols:
+    - "s_1"
+    - "s_2"
+    - "s_3"
+    - "s_4"
+    - "s_5"
+    - "s_6"
+    - "s_7"
+    - "s_8"
+    - "s_9"
+    - "s_10"
+    - "s_11"
+    - "s_12"
+    - "s_13"
+    - "s_14"
+    - "s_15"
+    - "s_16"
+    - "s_17"
+    - "s_18"
+    - "s_19"
+    - "s_20"
+    - "s_21"
+  # Active informative sensors for FD001 (sensors with variance)
+  active_sensors: ["s_2", "s_3", "s_4", "s_7", "s_8", "s_9", "s_11", "s_12", "s_13", "s_14", "s_15", "s_17", "s_20", "s_21"]
+
+features:
+  rolling_windows: [5, 10, 20]
+  piecewise_rul_max: 125  # Max linear ceiling for RUL early life
+  pca_components: 2
+
+survival:
+  time_to_event_col: "time_cycles"
+  event_col: "event_occurred"
+
+cost_optimization:
+  cost_preventive: 500.0    # Cost of planned maintenance ($)
+  cost_corrective: 5000.0   # Cost of unplanned failure ($)
+  cost_downtime_per_cycle: 100.0 # Downtime penalty per extra cycle ($)
+
+mlflow:
+  experiment_name: "predictive_maintenance_c_mapss"
+  tracking_uri: "file:./mlruns"
+
+streaming:
+  kafka_broker: "localhost:9092"
+  topic_telemetry: "engine_telemetry"
+  topic_alerts: "maintenance_alerts"
+  simulation_delay_sec: 0.1
+
+rag:
+  model_name: "synthetic-maintenance-assistant"
